@@ -1,0 +1,118 @@
+@name RuneWeapons
+@persist Weapon:string PrimaryDelay SecondaryDelay IsLethal PrimarySound:string SecondarySound:string Spread AimPos:vector ThinkDelay JumpMulti Bullet:entity SecPitch GaussMulti GaussSize
+
+# RuneWeapons
+# By Runic
+
+
+if(first() || duped()){
+    holoCreate(1)
+    holoAlpha(1,0)
+    holoPos(1,owner():toWorld(vec(0,0,60)))
+    holoParent(1,owner())
+    holoCreate(4)
+    holoAlpha(4,0)
+    holoPos(4,owner():toWorld(vec(0,0,60)))
+    holoParent(4,owner())
+    holoCreate(5)
+    holoAlpha(5,0)
+    holoPos(5,owner():toWorld(vec(0,0,60)))
+    holoParent(5,owner())
+        
+    holoCreate(3)
+    holoAlpha(3,0)
+    
+    # Here is the Weapon Tweaking
+    
+    # Lethal?
+    
+    IsLethal = 1
+    # Weapon to Replace
+    Weapon = "weapon_physcannon"
+    
+    # Spread
+    Spread = 5
+    
+    # Sound Setup
+    PrimarySound = "weapons/pistol/pistol_empty.wav"
+    SecondarySound = "weapons/pistol/pistol_empty.wav"
+    
+    # Attack Intervals
+    PrimaryDelay = 300
+    SecondaryDelay = 1
+    
+    # How Fast does the Idle timer get called?
+    ThinkDelay = 100
+    
+    # Set up Timers
+    timer("RuneWeapon_Primary",1)
+    timer("RuneWeapon_Secondary",1)
+    timer("RuneWeapon_Think",1)  
+}
+
+# Think
+if(clk("RuneWeapon_Think")){
+    # Idle Code Goes here
+
+    if(owner():weapon():type() == Weapon){
+        
+    }
+    if(changed(owner():weapon():type()) && owner():weapon():type() == Weapon){
+        
+    }
+    timer("RuneWeapon_Think",ThinkDelay)
+}
+
+# Primary Attack
+if(clk("RuneWeapon_Primary")){
+    if(changed(owner():keyAttack1())){
+        AimPos = owner():aimPos()
+    }
+    if(owner():keyAttack1() && owner():weapon():type() == Weapon){         
+        # Sound Code #################################################
+        HoloRand = randint(1,4)
+        SndRand = randint(22,24)
+        holoEntity(HoloRand):soundPlay(SndRand,1,PrimarySound)
+        soundPitch(SndRand,randint(95,110))
+        ##############################################################  
+        propDeleteAll()
+        AimPos = owner():aimPos()
+        Bullet = propSpawn("models/hunter/blocks/cube1x1x1.mdl",ang(0,0,0),1)
+        noCollide(Bullet,owner())
+        Bullet:setAlpha(1)
+        Bullet:setPos(owner():shootPos())
+        Bullet:setMass(444)
+        Bullet:propFreeze(0)
+        Bullet:applyForce(((owner():aimPos()-owner():shootPos())*(Bullet:mass()*444)))
+    }
+    timer("RuneWeapon_Primary",PrimaryDelay)
+}
+
+# Secondary Attack
+if(clk("RuneWeapon_Secondary")){
+    if(changed(owner():keyAttack2()) && owner():keyAttack2() == 1 && owner():weapon():type() == Weapon){ 
+            
+        # Sound Code #################################################
+        HoloRand = randint(1,4)
+        SndRand = randint(22,24)
+        holoEntity(HoloRand):soundPlay(SndRand,1,SecondarySound)
+        soundPitch(SndRand,randint(95,110))
+        ##############################################################
+        
+    }
+    if(owner():keyAttack2() && owner():weapon():type() == Weapon){
+
+    }
+    if(changed(owner():keyAttack2()) && owner():keyAttack2() == 0 && owner():weapon():type() == Weapon){
+        
+    }
+    timer("RuneWeapon_Secondary",SecondaryDelay)
+}
+
+# Additional Stuff
+if(clk("shoottrails")){
+
+}
+if(clk("removetrails")){
+
+}
