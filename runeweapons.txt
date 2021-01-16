@@ -1,5 +1,5 @@
 @name RuneWeapons
-@persist Weapon:string PrimaryDelay SecondaryDelay IsLethal PrimarySound:string SecondarySound:string Spread AimPos:vector ThinkDelay JumpMulti Bullet:entity SecPitch GaussMulti GaussSize
+@persist Weapon:string PrimaryDelay SecondaryDelay IsPrimaryLethal IsSecondaryLethal PrimarySound:string SecondarySound:string Spread AimPos:vector ThinkDelay JumpMulti Bullet:entity SecPitch GaussMulti GaussSize
 
 # RuneWeapons
 # By Runic
@@ -26,7 +26,8 @@ if(first() || duped()){
     
     # Lethal?
     
-    IsLethal = 1
+    IsPrimaryLethal = 1
+    IsSecondaryLethal = 0
     # Weapon to Replace
     Weapon = "weapon_physcannon"
     
@@ -74,16 +75,18 @@ if(clk("RuneWeapon_Primary")){
         SndRand = randint(22,24)
         holoEntity(HoloRand):soundPlay(SndRand,1,PrimarySound)
         soundPitch(SndRand,randint(95,110))
-        ##############################################################  
-        propDeleteAll()
-        AimPos = owner():aimPos()
-        Bullet = propSpawn("models/hunter/blocks/cube1x1x1.mdl",ang(0,0,0),1)
-        noCollide(Bullet,owner())
-        Bullet:setAlpha(1)
-        Bullet:setPos(owner():shootPos())
-        Bullet:setMass(444)
-        Bullet:propFreeze(0)
-        Bullet:applyForce(((owner():aimPos()-owner():shootPos())*(Bullet:mass()*444)))
+        ##############################################################
+        if(IsPrimaryLethal){
+            propDeleteAll()
+            AimPos = owner():aimPos()
+            Bullet = propSpawn("models/hunter/blocks/cube1x1x1.mdl",ang(0,0,0),1)
+            noCollide(Bullet,owner())
+            Bullet:setAlpha(1)
+            Bullet:setPos(owner():shootPos())
+            Bullet:setMass(444)
+            Bullet:propFreeze(0)
+            Bullet:applyForce(((owner():aimPos()-owner():shootPos())*(Bullet:mass()*444)))
+        }
     }
     timer("RuneWeapon_Primary",PrimaryDelay)
 }
@@ -98,6 +101,17 @@ if(clk("RuneWeapon_Secondary")){
         holoEntity(HoloRand):soundPlay(SndRand,1,SecondarySound)
         soundPitch(SndRand,randint(95,110))
         ##############################################################
+        if(IsSecondaryLethal){
+            propDeleteAll()
+            AimPos = owner():aimPos()
+            Bullet = propSpawn("models/hunter/blocks/cube1x1x1.mdl",ang(0,0,0),1)
+            noCollide(Bullet,owner())
+            Bullet:setAlpha(1)
+            Bullet:setPos(owner():shootPos())
+            Bullet:setMass(444)
+            Bullet:propFreeze(0)
+            Bullet:applyForce(((owner():aimPos()-owner():shootPos())*(Bullet:mass()*444)))
+        }
         
     }
     if(owner():keyAttack2() && owner():weapon():type() == Weapon){
